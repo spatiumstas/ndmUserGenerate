@@ -46,7 +46,7 @@
 
         .copy-btn {
             position: absolute;
-            top: 0.25rem;
+            top: 0.5rem;
             right: 0.5rem;
             background-color: #444;
             color: #fff;
@@ -68,95 +68,43 @@
 <body>
 <div class="container">
     <h1 class="text-2xl font-bold mb-6 text-center">NDM User Generator</h1>
-    <div class="mb-4">
-        <label for="model" class="block text-sm font-medium text-gray-700">Device Model</label>
-        <input type="text" id="model" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., Keenetic Ultra (show configurator status)" required>
+    <div class="relative mb-4">
+        <input type="text" id="model" name="model" class="block w-full px-3 pt-6 pb-2 border border-gray-300 rounded-md bg-transparent appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 peer" placeholder=" " required>
+        <label for="model" class="absolute left-3 top-2 text-gray-500 text-sm transition-all duration-200 pointer-events-none peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500">Device Model
+            (show configurator status)</label>
     </div>
-    <div class="mb-4">
-        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" id="username" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+    <div class="relative mb-4">
+        <input type="text" id="username" name="username" class="block w-full px-3 pt-6 pb-2 border border-gray-300 rounded-md bg-transparent appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 peer" placeholder=" " required>
+        <label for="username"
+               class="absolute left-3 top-2 text-gray-500 text-sm transition-all duration-200 pointer-events-none peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500">Username</label>
     </div>
-    <div class="mb-6">
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="text" id="password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" required>
+    <div class="relative mb-6">
+        <input type="password" id="password" name="password" class="block w-full px-3 pt-6 pb-2 border border-gray-300 rounded-md pr-10 bg-transparent appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 peer" placeholder=" " required>
+        <label for="password"
+               class="absolute left-3 top-2 text-gray-500 text-sm transition-all duration-200 pointer-events-none peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-500">Password</label>
+        <button type="button" id="togglePassword" tabindex="-1" class="absolute top-1/2 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+        </button>
     </div>
-    <button onclick="_0xf0()" class="w-full text-white p-2 rounded-md hover:bg-blue-700" style="background-color: #0097dc;">Generate</button>
-
-    <div id="result" class="mt-6 hidden relative">
-        <button class="copy-btn">Copy</button>
-        <pre id="outputBlock" class="code-block"></pre>
+    <button type="button" id="generateBtn" class="w-full text-white p-2 rounded-md hover:bg-blue-700 hover:opacity-85 transition-opacity" style="background-color: #0097dc;">Generate</button>
+    <div id="result" class="mt-6 hidden">
+        <div class="relative">
+            <span class="absolute top-2 left-3 text-xs pointer-events-none select-none z-10" style="color: #bdb7b7;">startup-config</span>
+            <button class="copy-btn">Copy</button>
+            <pre id="outputBlock" class="code-block relative"></pre>
+        </div>
+        <div class="relative mt-4">
+            <span class="absolute top-2 left-3 text-xs pointer-events-none select-none z-10" style="color: #bdb7b7;">CLI</span>
+            <button class="copy-btn">Copy</button>
+            <pre id="outputBlockAlt" class="code-block"></pre>
+        </div>
     </div>
 </div>
-
 <script>
-    function copyToClipboard(elementId, event) {
-        const text = document.getElementById(elementId).textContent;
-        navigator.clipboard.writeText(text);
-
-        const copyBtn = event.target;
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = 'Copied';
-
-        setTimeout(() => {
-            copyBtn.textContent = originalText;
-        }, 3000);
-    }
-
-    const _0x12 = function (_0x34) {
-        const _0x56 = new ArrayBuffer(_0x34.length * 2);
-        const _0x78 = new DataView(_0x56);
-        for (let _0x9a = 0; _0x9a < _0x34.length; _0x9a++) {
-            _0x78.setUint16(_0x9a * 2, _0x34.charCodeAt(_0x9a), true);
-        }
-        return new Uint8Array(_0x56);
-    };
-
-    const _0xbc = function (_0xde) {
-        return md4(_0xde);
-    };
-
-    const _0xf0 = function () {
-        const _0x11 = document.getElementById('username').value.trim();
-        const _0x22 = document.getElementById('model').value.trim();
-        const _0x33 = document.getElementById('password').value.trim();
-
-        if (!_0x11 || !_0x22 || !_0x33) {
-            document.querySelector('input:invalid').focus();
-            return;
-        }
-
-        const _0x44 = `${_0x11}:${_0x22}:${_0x33}`;
-        const _0x55 = md5(_0x44);
-        const _0x66 = _0x12(_0x33);
-        const _0x77 = _0xbc(_0x66);
-        const _0x88 = document.getElementById('result');
-        const _0xcc = document.getElementById('outputBlock');
-
-        _0xcc.textContent = `user ${_0x11}
-    password nt ${_0x77}
-    password md5 ${_0x55}
-!`;
-
-        _0x88.classList.remove('hidden');
-    };
-
-    window.onload = function () {
-        document.querySelector('button').onclick = _0xf0;
-
-        const inputs = document.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    _0xf0();
-                }
-            });
-        });
-
-        const copyBtn = document.querySelector('.copy-btn');
-        copyBtn.addEventListener('click', function (e) {
-            copyToClipboard('outputBlock', e);
-        });
-    };
+const _0x31db29=_0x8383;(function(_0x1fd327,_0x57f9c6){const _0x455e17=_0x8383,_0x441bcd=_0x1fd327();while(!![]){try{const _0x362ace=parseInt(_0x455e17(0x157))/0x1+parseInt(_0x455e17(0x15c))/0x2+parseInt(_0x455e17(0x179))/0x3*(-parseInt(_0x455e17(0x168))/0x4)+-parseInt(_0x455e17(0x158))/0x5+parseInt(_0x455e17(0x15d))/0x6*(parseInt(_0x455e17(0x174))/0x7)+-parseInt(_0x455e17(0x175))/0x8+parseInt(_0x455e17(0x165))/0x9;if(_0x362ace===_0x57f9c6)break;else _0x441bcd['push'](_0x441bcd['shift']());}catch(_0x326a34){_0x441bcd['push'](_0x441bcd['shift']());}}}(_0x1c98,0xdc2a1));function _0x1c98(){const _0x121425=['result','focus','length','\x0a\x20\x20\x20\x20password\x20md5\x20','outputBlock','onclick','text','\x0apassword\x20md5\x20','user\x20','getElementById','generateBtn','preventDefault','1552567PqQdmM','5531440Brzttg','outputBlockAlt','Copied','trim','2262560nwpLPq','17598ONOTNi','Enter','<path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M13.875\x2018.825A10.05\x2010.05\x200\x200112\x2019c-4.478\x200-8.268-2.943-9.542-7a9.956\x209.956\x200\x20012.042-3.368m3.087-2.933A9.956\x209.956\x200\x200112\x205c4.478\x200\x208.268\x202.943\x209.542\x207a9.956\x209.956\x200\x2001-4.043\x205.197M15\x2012a3\x203\x200\x2011-6\x200\x203\x203\x200\x20016\x200z\x22\x20/><path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M3\x203l18\x2018\x22\x20/>','addEventListener','hidden','<path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M15\x2012a3\x203\x200\x2011-6\x200\x203\x203\x200\x20016\x200z\x22\x20/><path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M2.458\x2012C3.732\x207.943\x207.523\x205\x2012\x205c4.478\x200\x208.268\x202.943\x209.542\x207-1.274\x204.057-5.064\x207-9.542\x207-4.477\x200-8.268-2.943-9.542-7z\x22\x20/>','forEach','value','4933827lIbbbw','textContent','onload','604oCWlSn','click','password','clipboard','input:invalid','remove','querySelector','type','username','\x0a\x20\x20\x20\x20password\x20nt\x20','charCodeAt','.copy-btn','49vvpFGG','2821552PkCsyO','querySelectorAll','classList','setUint16','17718agwhFt','target','writeText'];_0x1c98=function(){return _0x121425;};return _0x1c98();}function _0x8383(_0x3484da,_0xd61c2c){const _0x1c98d2=_0x1c98();return _0x8383=function(_0x838376,_0x126c59){_0x838376=_0x838376-0x14d;let _0x528842=_0x1c98d2[_0x838376];return _0x528842;},_0x8383(_0x3484da,_0xd61c2c);}function copyToClipboard(_0xa7f845,_0xc45195){const _0x2e2a77=_0x8383,_0x118019=document[_0x2e2a77(0x154)](_0xa7f845)[_0x2e2a77(0x166)];navigator[_0x2e2a77(0x16b)][_0x2e2a77(0x17b)](_0x118019);const _0x434e56=_0xc45195[_0x2e2a77(0x17a)],_0x5beed1=_0x434e56[_0x2e2a77(0x166)];_0x434e56[_0x2e2a77(0x166)]=_0x2e2a77(0x15a),setTimeout(()=>{const _0x4435c8=_0x2e2a77;_0x434e56[_0x4435c8(0x166)]=_0x5beed1;},0xbb8);}function toNT(_0xd91bbe){const _0x578915=_0x8383,_0x319545=new ArrayBuffer(_0xd91bbe[_0x578915(0x14d)]*0x2),_0x31f97b=new DataView(_0x319545);for(let _0x3ab380=0x0;_0x3ab380<_0xd91bbe['length'];_0x3ab380++)_0x31f97b[_0x578915(0x178)](_0x3ab380*0x2,_0xd91bbe[_0x578915(0x172)](_0x3ab380),!![]);return new Uint8Array(_0x319545);}function generate(){const _0x4f41ba=_0x8383,_0x82a532=document[_0x4f41ba(0x154)](_0x4f41ba(0x170))['value'][_0x4f41ba(0x15b)](),_0x564270=document[_0x4f41ba(0x154)]('model')['value'][_0x4f41ba(0x15b)](),_0x1d4461=document[_0x4f41ba(0x154)](_0x4f41ba(0x16a))[_0x4f41ba(0x164)][_0x4f41ba(0x15b)]();if(!_0x82a532||!_0x564270||!_0x1d4461){document[_0x4f41ba(0x16e)](_0x4f41ba(0x16c))?.[_0x4f41ba(0x17d)]();return;}const _0x4724a3=md5(_0x82a532+':'+_0x564270+':'+_0x1d4461),_0x1cdc2a=md4(toNT(_0x1d4461));document[_0x4f41ba(0x154)](_0x4f41ba(0x14f))[_0x4f41ba(0x166)]=_0x4f41ba(0x153)+_0x82a532+_0x4f41ba(0x171)+_0x1cdc2a+_0x4f41ba(0x14e)+_0x4724a3+'\x0a!',document[_0x4f41ba(0x154)](_0x4f41ba(0x159))[_0x4f41ba(0x166)]=_0x4f41ba(0x153)+_0x82a532+'\x0apassword\x20nt\x20'+_0x1cdc2a+_0x4f41ba(0x152)+_0x4724a3+'\x0asystem\x20configuration\x20save',document[_0x4f41ba(0x154)](_0x4f41ba(0x17c))[_0x4f41ba(0x177)][_0x4f41ba(0x16d)](_0x4f41ba(0x161));}function togglePassword(_0x1d03b7){const _0x5a7124=_0x8383;_0x1d03b7[_0x5a7124(0x156)](),_0x1d03b7['stopPropagation']();const _0x12f3e2=document[_0x5a7124(0x154)](_0x5a7124(0x16a)),_0xd38920=document['getElementById']('eyeIcon');_0x12f3e2[_0x5a7124(0x16f)]===_0x5a7124(0x16a)?(_0x12f3e2[_0x5a7124(0x16f)]=_0x5a7124(0x151),_0xd38920['innerHTML']=_0x5a7124(0x15f)):(_0x12f3e2['type']=_0x5a7124(0x16a),_0xd38920['innerHTML']=_0x5a7124(0x162));}window[_0x31db29(0x167)]=function(){const _0x4bebc0=_0x31db29;document['getElementById'](_0x4bebc0(0x155))[_0x4bebc0(0x150)]=generate,document[_0x4bebc0(0x154)]('togglePassword')['onclick']=togglePassword,document[_0x4bebc0(0x176)]('input')[_0x4bebc0(0x163)](_0x5e66ac=>{_0x5e66ac['addEventListener']('keypress',function(_0x22a092){const _0x57ff22=_0x8383;if(_0x22a092['key']===_0x57ff22(0x15e))generate();});}),document['querySelectorAll'](_0x4bebc0(0x173))[_0x4bebc0(0x163)]((_0x18d8a0,_0x53c42b)=>{const _0x4d601a=_0x4bebc0;_0x18d8a0[_0x4d601a(0x160)](_0x4d601a(0x169),function(_0x22a1e0){const _0x4d55b3=_0x4d601a;copyToClipboard(_0x53c42b===0x0?_0x4d55b3(0x14f):_0x4d55b3(0x159),_0x22a1e0);});});};
 </script>
 </body>
 </html>
