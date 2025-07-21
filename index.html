@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/js-md4@0.3.2/build/md4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #fff;
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 0;
+            background: #1e2025;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.24);
+            border: 1px solid #d0d4da;
+        }
+
+        h1 {
+            margin: 0 0 32px;
+            font-size: 19px;
+            font-weight: 500;
+            text-align: center;
+            color: #1e2025;
+        }
+
+        .relative {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .field-last { margin-bottom: 28px; }
+        .relative.mt-4 { margin-top: 20px; }
+
+        input {
+            width: 100%;
+            min-height: 48px;
+            padding: 14px 24px;
+            font-size: 16px;
+            color: #1e2025;
+            background: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        input.input-with-icon { padding-right: 52px; }
+
+        input:hover { border-color: #9ca3af; }
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,.5);
+        }
+        input::placeholder { color: #9ca3af; }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            padding: 4px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #797d89;
+            display: flex;
+            align-items: center;
+        }
+        .toggle-password:hover { color: #515660; }
+        .toggle-password svg { width: 20px; height: 20px; }
+
+        .relative label {
+            position: absolute;
+            left: 24px;
+            padding: 0 6px;
+            font-size: 14px;
+            line-height: 20px;
+            z-index: 10;
+            pointer-events: none;
+            transition: all .2s;
+        }
+        input:placeholder-shown ~ label {
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #9ca3af;
+            background: transparent;
+        }
+        input:focus ~ label,
+        input:not(:placeholder-shown) ~ label {
+            top: -9px;
+            transform: translateY(0);
+            font-size: 12px;
+            background: #fff;
+            color: #3b82f6;
+        }
+        input:not(:placeholder-shown):not(:focus) ~ label { color: #515660; }
+
+        #generateBtn {
+            width: 100%;
+            min-height: 48px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            background: #0086cb;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background .2s, box-shadow .2s;
+        }
+        #generateBtn:hover {
+            background: #219cde;
+            box-shadow: 0 0 0 2px rgba(33,156,222,.3);
+        }
+        #generateBtn:active { background: #0664a0; }
+
+        #result { margin-top: 24px; }
+        #result .relative { margin-bottom: 16px; }
+        #result .relative:last-child { margin-bottom: 0; }
+
+        .code-block {
+            position: relative;
+            padding: 36px 24px 20px;
+            background: #1e2025;
+            color: #fff;
+            font-family: ui-monospace, monospace;
+            font-size: 14px;
+            line-height: 22px;
+            white-space: pre-wrap;
+            overflow: auto;
+            border-radius: 6px;
+            border: 1px solid #515660;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            font-size: 12px;
+            color: #797d89;
+            pointer-events: none;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #fff;
+            background: #515660;
+            border: 1px solid #6a6f7c;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 10;
+            transition: background .2s, border-color .2s;
+        }
+        .copy-btn:hover {
+            background: #0086cb;
+            border-color: #219cde;
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 480px) {
+            .container { padding: 24px 20px; }
+            input { padding: 12px 20px; }
+            .relative label { left: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="relative">
+        <input type="text" id="model" name="model" placeholder=" " required>
+        <label for="model">Device Model (show configurator status)</label>
+    </div>
+    <div class="relative">
+        <input type="text" id="username" name="username" placeholder=" " required>
+        <label for="username">Username</label>
+    </div>
+    <div class="relative field-last">
+        <input type="password" id="password" name="password" class="input-with-icon" placeholder=" " required>
+        <label for="password">Password</label>
+        <button type="button" id="togglePassword" tabindex="-1" class="toggle-password">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+        </button>
+    </div>
+    <button type="button" id="generateBtn">Generate</button>
+    <div id="result" class="hidden">
+        <div class="relative">
+            <span class="code-label">startup-config</span>
+            <button class="copy-btn">Copy</button>
+            <pre id="outputBlock" class="code-block"></pre>
+        </div>
+        <div class="relative mt-4">
+            <span class="code-label">CLI</span>
+            <button class="copy-btn">Copy</button>
+            <pre id="outputBlockAlt" class="code-block"></pre>
+        </div>
+    </div>
+</div>
+<script>
+const _0x2f7b93=_0x394f;(function(_0x523d8e,_0x1455ad){const _0x3e756c=_0x394f,_0x39b8b2=_0x523d8e();while(!![]){try{const _0x4273e5=parseInt(_0x3e756c(0x16a))/0x1+-parseInt(_0x3e756c(0x159))/0x2+-parseInt(_0x3e756c(0x178))/0x3+parseInt(_0x3e756c(0x16e))/0x4+parseInt(_0x3e756c(0x166))/0x5+-parseInt(_0x3e756c(0x15a))/0x6+parseInt(_0x3e756c(0x164))/0x7;if(_0x4273e5===_0x1455ad)break;else _0x39b8b2['push'](_0x39b8b2['shift']());}catch(_0x5cf294){_0x39b8b2['push'](_0x39b8b2['shift']());}}}(_0x4477,0xdca46));function _0x4477(){const _0x5112ef=['clipboard','text','password','1929114mhsmaj','3778596pJzKra','charCodeAt','\x0apassword\x20nt\x20','onclick','setUint16','\x0asystem\x20configuration\x20save','generateBtn','length','eyeIcon','user\x20','7392455ssrvpE','username','736150PjdTtd','Enter','remove','classList','1181143YXRugj','\x0a\x20\x20\x20\x20password\x20md5\x20','focus','querySelector','1942164RaerCX','<path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M15\x2012a3\x203\x200\x2011-6\x200\x203\x203\x200\x20016\x200z\x22\x20/><path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M2.458\x2012C3.732\x207.943\x207.523\x205\x2012\x205c4.478\x200\x208.268\x202.943\x209.542\x207-1.274\x204.057-5.064\x207-9.542\x207-4.477\x200-8.268-2.943-9.542-7z\x22\x20/>','\x0a\x20\x20\x20\x20password\x20nt\x20','input','innerHTML','key','keypress','forEach','outputBlockAlt','querySelectorAll','1115718htRaQu','stopPropagation','textContent','value','.copy-btn','type','hidden','preventDefault','input:invalid','addEventListener','writeText','trim','Copied','onload','getElementById','outputBlock'];_0x4477=function(){return _0x5112ef;};return _0x4477();}function _0x394f(_0x3deb0a,_0x23d0e1){const _0x447712=_0x4477();return _0x394f=function(_0x394fbb,_0xd1177f){_0x394fbb=_0x394fbb-0x151;let _0x4131cb=_0x447712[_0x394fbb];return _0x4131cb;},_0x394f(_0x3deb0a,_0x23d0e1);}function copyToClipboard(_0x67cb4b,_0x3a4103){const _0x5f43b4=_0x394f,_0x3e2845=document[_0x5f43b4(0x154)](_0x67cb4b)[_0x5f43b4(0x17a)];navigator[_0x5f43b4(0x156)][_0x5f43b4(0x182)](_0x3e2845);const _0x3703c8=_0x3a4103['target'],_0x14fd3d=_0x3703c8['textContent'];_0x3703c8['textContent']=_0x5f43b4(0x152),setTimeout(()=>{const _0x523559=_0x5f43b4;_0x3703c8[_0x523559(0x17a)]=_0x14fd3d;},0xbb8);}function toNT(_0x520c18){const _0x58c08a=_0x394f,_0x45fb03=new ArrayBuffer(_0x520c18['length']*0x2),_0x125c82=new DataView(_0x45fb03);for(let _0x52e367=0x0;_0x52e367<_0x520c18[_0x58c08a(0x161)];_0x52e367++)_0x125c82[_0x58c08a(0x15e)](_0x52e367*0x2,_0x520c18[_0x58c08a(0x15b)](_0x52e367),!![]);return new Uint8Array(_0x45fb03);}function generate(){const _0x5a473b=_0x394f,_0x37e288=document[_0x5a473b(0x154)](_0x5a473b(0x165))[_0x5a473b(0x17b)][_0x5a473b(0x151)](),_0x52b45e=document[_0x5a473b(0x154)]('model')[_0x5a473b(0x17b)][_0x5a473b(0x151)](),_0x55977b=document[_0x5a473b(0x154)](_0x5a473b(0x158))[_0x5a473b(0x17b)][_0x5a473b(0x151)]();if(!_0x37e288||!_0x52b45e||!_0x55977b){document[_0x5a473b(0x16d)](_0x5a473b(0x180))?.[_0x5a473b(0x16c)]();return;}const _0x4847b6=md5(_0x37e288+':'+_0x52b45e+':'+_0x55977b),_0x191e97=md4(toNT(_0x55977b));document[_0x5a473b(0x154)](_0x5a473b(0x155))[_0x5a473b(0x17a)]=_0x5a473b(0x163)+_0x37e288+_0x5a473b(0x16b)+_0x4847b6+_0x5a473b(0x170)+_0x191e97+'\x0a!',document[_0x5a473b(0x154)]('outputBlockAlt')[_0x5a473b(0x17a)]=_0x5a473b(0x163)+_0x37e288+'\x0apassword\x20md5\x20'+_0x4847b6+_0x5a473b(0x15c)+_0x191e97+_0x5a473b(0x15f),document[_0x5a473b(0x154)]('result')[_0x5a473b(0x169)][_0x5a473b(0x168)](_0x5a473b(0x17e));}function togglePassword(_0x268898){const _0x4a330a=_0x394f;_0x268898[_0x4a330a(0x17f)](),_0x268898[_0x4a330a(0x179)]();const _0x3eb389=document[_0x4a330a(0x154)](_0x4a330a(0x158)),_0x315771=document[_0x4a330a(0x154)](_0x4a330a(0x162));_0x3eb389[_0x4a330a(0x17d)]===_0x4a330a(0x158)?(_0x3eb389['type']=_0x4a330a(0x157),_0x315771[_0x4a330a(0x172)]='<path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M13.875\x2018.825A10.05\x2010.05\x200\x200112\x2019c-4.478\x200-8.268-2.943-9.542-7a9.956\x209.956\x200\x20012.042-3.368m3.087-2.933A9.956\x209.956\x200\x200112\x205c4.478\x200\x208.268\x202.943\x209.542\x207a9.956\x209.956\x200\x2001-4.043\x205.197M15\x2012a3\x203\x200\x2011-6\x200\x203\x203\x200\x20016\x200z\x22\x20/><path\x20stroke-linecap=\x22round\x22\x20stroke-linejoin=\x22round\x22\x20stroke-width=\x222\x22\x20d=\x22M3\x203l18\x2018\x22\x20/>'):(_0x3eb389[_0x4a330a(0x17d)]=_0x4a330a(0x158),_0x315771[_0x4a330a(0x172)]=_0x4a330a(0x16f));}window[_0x2f7b93(0x153)]=function(){const _0x2edc86=_0x2f7b93;document['getElementById'](_0x2edc86(0x160))['onclick']=generate,document[_0x2edc86(0x154)]('togglePassword')[_0x2edc86(0x15d)]=togglePassword,document[_0x2edc86(0x177)](_0x2edc86(0x171))[_0x2edc86(0x175)](_0x1a48a8=>{const _0x4225dc=_0x2edc86;_0x1a48a8[_0x4225dc(0x181)](_0x4225dc(0x174),function(_0x130598){const _0x4de7ab=_0x4225dc;if(_0x130598[_0x4de7ab(0x173)]===_0x4de7ab(0x167))generate();});}),document[_0x2edc86(0x177)](_0x2edc86(0x17c))[_0x2edc86(0x175)]((_0x3f5de1,_0x16b8a4)=>{const _0x5c13e9=_0x2edc86;_0x3f5de1[_0x5c13e9(0x181)]('click',function(_0x2b4007){const _0x56b418=_0x5c13e9;copyToClipboard(_0x16b8a4===0x0?_0x56b418(0x155):_0x56b418(0x176),_0x2b4007);});});};
+</script>
+</body>
+</html>
