@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>User Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/js-md4@0.3.2/build/md4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    <style>* {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 40px 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        font: 16px/1.5 "Roboto", sans-serif;
+        color: #fff;
+        background: #1e2025
+    }
+
+    .container {
+        width: 100%;
+        max-width: 720px;
+        padding: 40px;
+        background: #fff;
+        border: 1px solid #d0d4da;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .24)
+    }
+
+    .generator-section {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #e5e7eb
+    }
+
+    .decoder-section {
+        margin-top: 32px
+    }
+
+    .section-title {
+        margin: 0 0 24px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 500;
+        color: #1e2025
+    }
+
+    .relative {
+        position: relative;
+        margin-bottom: 20px
+    }
+
+    .field-last {
+        margin-bottom: 28px
+    }
+
+    .mt-4 {
+        margin-top: 20px
+    }
+
+    input {
+        width: 100%;
+        min-height: 48px;
+        padding: 14px 24px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        outline: none;
+        background: #fff;
+        color: #1e2025;
+        font-size: 16px;
+        transition: border-color .2s, box-shadow .2s
+    }
+
+    input:hover {
+        border-color: #9ca3af
+    }
+
+    input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, .5)
+    }
+
+    input::placeholder {
+        color: #9ca3af
+    }
+
+    .input-with-icon {
+        padding-right: 52px
+    }
+
+    .relative label {
+        position: absolute;
+        left: 24px;
+        top: 50%;
+        padding: 0 6px;
+        transform: translateY(-50%);
+        pointer-events: none;
+        background: transparent;
+        color: #9ca3af;
+        transition: .2s
+    }
+
+    input:focus ~ label, input:not(:placeholder-shown) ~ label {
+        top: -9px;
+        transform: none;
+        background: #fff;
+        color: #3b82f6;
+        font-size: 12px
+    }
+
+    input:not(:placeholder-shown):not(:focus) ~ label {
+        color: #515660
+    }
+
+    button {
+        font: inherit;
+        cursor: pointer;
+        border: none;
+        transition: background .2s, box-shadow .2s
+    }
+
+    #generateBtn, #decodeBtn {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 6px;
+        background: #0086cb;
+        color: #fff;
+        font-weight: 500
+    }
+
+    #generateBtn:hover, #decodeBtn:hover {
+        background: #219cde;
+        box-shadow: 0 0 0 2px rgba(33, 156, 222, .3)
+    }
+
+    .toggle-password svg {
+        width: 20px;
+        height: 20px
+    }
+
+    #result {
+        margin-top: 24px
+    }
+
+    .code-block {
+        padding: 36px 24px 20px;
+        overflow: auto;
+        white-space: pre-wrap;
+        border-radius: 6px;
+        border: 1px solid #515660;
+        background: #1e2025;
+        color: #fff;
+        font-family: ui-monospace, monospace;
+        font-size: 14px;
+        line-height: 22px
+    }
+
+    .ns3-output {
+        min-height: 60px;
+        color: #4ade80;
+        font-size: 15px
+    }
+
+    .code-label {
+        position: absolute;
+        top: 12px;
+        left: 16px;
+        color: #797d89;
+        font-size: 12px
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 8px 16px;
+        border: 1px solid #6a6f7c;
+        border-radius: 6px;
+        background: #515660;
+        color: #fff;
+        font-size: 12px
+    }
+
+    .copy-btn:hover {
+        background: #0086cb;
+        border-color: #219cde
+    }
+
+    .hidden {
+        display: none !important
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            padding: 24px 20px
+        }
+
+        input {
+            padding: 12px 20px
+        }
+
+        .relative label {
+            left: 20px
+        }
+    }</style>
+</head>
+<body>
+<div class="container">
+    <section class="generator-section"><h2 class="section-title">User Generator</h2>
+        <div class="relative"><input type="text" id="model" placeholder=" " required><label for="model">Device Model (show configurator status)</label></div>
+        <div class="relative"><input type="text" id="username" placeholder=" " required><label for="username">Username</label></div>
+        <div class="relative field-last"><input type="text" id="password" class="input-with-icon" placeholder=" " required><label for="password">Password</label></div>
+        <button id="generateBtn" type="button">Generate</button>
+        <div id="result" class="hidden">
+            <div class="relative"><span class="code-label">startup-config</span>
+                <button id="copyStartupBtn" class="copy-btn" type="button">Copy</button>
+                <pre id="outputBlock" class="code-block"></pre>
+            </div>
+            <div class="relative mt-4"><span class="code-label">CLI</span>
+                <button id="copyCliBtn" class="copy-btn" type="button">Copy</button>
+                <pre id="outputBlockAlt" class="code-block"></pre>
+            </div>
+        </div>
+    </section>
+    <section class="decoder-section"><h2 class="section-title">NS3 Decoder</h2>
+        <div class="relative"><input type="text" id="ns3input" placeholder=" " required><label for="ns3input">NS3</label></div>
+        <button id="decodeBtn" type="button">Decode</button>
+        <div id="ns3result" class="hidden">
+            <div class="relative">
+                <button id="copyNs3Btn" class="copy-btn" type="button">Copy</button>
+                <pre id="ns3output" class="code-block ns3-output"></pre>
+            </div>
+        </div>
+    </section>
+</div>
+<script> const $ = id => document.getElementById(id);
+const elements = {
+    model: $("model"),
+    username: $("username"),
+    password: $("password"),
+    generateBtn: $("generateBtn"),
+    decodeBtn: $("decodeBtn"),
+    result: $("result"),
+    outputBlock: $("outputBlock"),
+    outputBlockAlt: $("outputBlockAlt"),
+    ns3Input: $("ns3input"),
+    ns3Result: $("ns3result"),
+    ns3Output: $("ns3output"),
+    copyStartupBtn: $("copyStartupBtn"),
+    copyCliBtn: $("copyCliBtn"),
+    copyNs3Btn: $("copyNs3Btn")
+};
+
+async function copyText(text, button) {
+    if (!text) return;
+    await navigator.clipboard.writeText(text);
+    const original = button.textContent;
+    button.textContent = "Copied";
+    setTimeout(() => {
+        button.textContent = original;
+    }, 1500);
+}
+
+function copyElement(element, button) {
+    copyText(element.textContent.trim(), button);
+}
+
+function toNT(password) {
+    const buffer = new ArrayBuffer(password.length * 2);
+    const view = new DataView(buffer);
+    for (let i = 0; i < password.length; i++) {
+        view.setUint16(i * 2, password.charCodeAt(i), true);
+    }
+    return new Uint8Array(buffer);
+}
+
+function getGeneratorValues() {
+    return {username: elements.username.value.trim(), model: elements.model.value.trim(), password: elements.password.value.trim()};
+}
+
+function generate() {
+    const {username, model, password} = getGeneratorValues();
+    if (!username || !model || !password) {
+        document.querySelector("input:invalid")?.focus();
+        return;
+    }
+    const passwordMd5 = md5(`${username}:${model}:${password}`);
+    const passwordNt = md4(toNT(password));
+    elements.outputBlock.textContent = `user ${username}\n password md5 ${passwordMd5}\n password nt ${passwordNt}\n!`;
+    elements.outputBlockAlt.textContent = `user ${username}\npassword md5 ${passwordMd5}\npassword nt ${passwordNt}\nsystem configuration save`;
+    elements.result.classList.remove("hidden");
+}
+
+window.onload = function () {
+    document.getElementById("generateBtn").onclick = generate;
+    document.querySelectorAll("input").forEach(i => i.addEventListener("keypress", e => {
+        if (e.key === "Enter") generate();
+    }));
+    const decodeBtn = document.getElementById('decodeBtn');
+    const ns3Input = document.getElementById('ns3input');
+    decodeBtn.addEventListener('click', async () => {
+        const inputVal = ns3Input.value.trim();
+        if (!inputVal) {
+            ns3Input.focus();
+            setTimeout(() => ns3Input.style.borderColor = '', 1500);
+            return;
+        }
+        const resultDiv = document.getElementById('ns3result');
+        const output = document.getElementById('ns3output');
+        try {
+            const decoded = await ns3Decode(inputVal);
+            output.textContent = decoded;
+            resultDiv.classList.remove('hidden');
+        } catch (e) {
+            output.textContent = "Decoding error";
+            resultDiv.classList.remove('hidden');
+        }
+    });
+};
+
+function firstStep(password, x1, x2) {
+    x1 &= 0xff;
+    x2 &= 0xff;
+    for (let i = 0; i < password.length; i++) {
+        password[i] ^= x2;
+        password[i] &= 0xff;
+        [x2, x1] = [x1 + x2, x2];
+    }
+    return password;
+}
+
+function secondStep(password) {
+    let x = 0;
+    for (const value of password) {
+        x ^= value;
+    }
+    for (let i = 1; i < 8; i++) {
+        const a = ((x >> i) ^ (~x << i)) & 0xff;
+        x = ((a << i) ^ (~a ^ x)) & 0xff;
+    }
+    return password.map(byte => byte ^ x);
+}
+
+function ns3Decode(ns3) {
+    while (ns3.length % 4) {
+        ns3 += "=";
+    }
+    let password = [...atob(ns3)].map(char => char.charCodeAt(0));
+    const length = password.length;
+    if (![18, 36, 72].includes(length)) {
+        throw new Error("Invalid NS3 length");
+    }
+    const x2Index = Math.floor(length / 7);
+    const x2 = password.splice(x2Index, 1)[0];
+    const x1Index = x2 % (length - 1);
+    const x1 = password.splice(x1Index, 1)[0];
+    password = secondStep(password);
+    password = firstStep(password, x1, x2);
+    const zero = password.indexOf(0);
+    return String.fromCharCode(...password.slice(0, zero === -1 ? password.length : zero));
+}
+
+function decodeNS3() {
+    const value = elements.ns3Input.value.trim();
+    if (!value) {
+        elements.ns3Input.focus();
+        return;
+    }
+    try {
+        elements.ns3Output.textContent = ns3Decode(value);
+    } catch {
+        elements.ns3Output.textContent = "Decoding error";
+    }
+    elements.ns3Result.classList.remove("hidden");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    elements.generateBtn.addEventListener("click", generate);
+    elements.decodeBtn.addEventListener("click", decodeNS3);
+    elements.copyStartupBtn.addEventListener("click", () => copyElement(elements.outputBlock, elements.copyStartupBtn));
+    elements.copyCliBtn.addEventListener("click", () => copyElement(elements.outputBlockAlt, elements.copyCliBtn));
+    elements.copyNs3Btn.addEventListener("click", () => copyElement(elements.ns3Output, elements.copyNs3Btn));
+    [elements.model, elements.username, elements.password].forEach(input => {
+        input.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                generate();
+            }
+        });
+    });
+    elements.ns3Input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            decodeNS3();
+        }
+    });
+}); </script>
+</body>
+</html>
